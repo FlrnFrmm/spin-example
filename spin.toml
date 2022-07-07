@@ -1,0 +1,30 @@
+spin_version = "1"
+description = "A Spin example application"
+name = "spin-example"
+version = "0.1.0"
+trigger = { type = "http", base = "/" }
+
+[[component]]
+id = "fileserver"
+source = "fileserver-component/target/wasm32-wasi/release/spin_static_fs.wasm"
+files = [{ source = "frontend/dist", destination = "/" }]
+[component.trigger]
+route = "/..."
+[component.build]
+command = "trunk build frontend/index.html && cargo build --target wasm32-wasi --release --manifest-path fileserver-component/Cargo.toml"
+
+[[component]]
+id = "redirect"
+source = "redirect-component/target/wasm32-wasi/release/redirect_component.wasm"
+[component.trigger]
+route = "/"
+[component.build]
+command = "cargo build --target wasm32-wasi --release --manifest-path redirect-component/Cargo.toml"
+
+[[component]]
+id = "api"
+source = "api-component/target/wasm32-wasi/release/api_component.wasm"
+[component.trigger]
+route = "/todos/..."
+[component.build]
+command = "cargo build --target wasm32-wasi --release --manifest-path api-component/Cargo.toml"
